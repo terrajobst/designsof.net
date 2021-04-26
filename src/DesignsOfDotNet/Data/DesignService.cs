@@ -8,7 +8,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Octokit;
@@ -17,12 +16,12 @@ namespace DesignsOfDotNet.Data
 {
     public sealed class DesignService
     {
-        private readonly IConfiguration _configuration;
+        private readonly GitHubClientFactory _gitHubClientFactory;
         private readonly IWebHostEnvironment _environment;
 
-        public DesignService(IConfiguration configuration, IWebHostEnvironment environment)
+        public DesignService(GitHubClientFactory gitHubClientFactory, IWebHostEnvironment environment)
         {
-            _configuration = configuration;
+            _gitHubClientFactory = gitHubClientFactory;
             _environment = environment;
         }
 
@@ -41,15 +40,11 @@ namespace DesignsOfDotNet.Data
                 }
             }
 
-            var token = _configuration["GitHubToken"];
-            var gitHub = new GitHubClient(new ProductHeaderValue("designs.net"))
-            {
-                Credentials = new Credentials(token)
-            };
+            var gitHub = await _gitHubClientFactory.CreateAsync();
 
             var documentByPath = new Dictionary<string, Document>();
 
-            foreach (var document in await GetDocuments("dotnet", "designs", "main"))
+            foreach (var document in await GetDocuments(DesignsOfDotNetConstants.DesignsOwner, DesignsOfDotNetConstants.DesignsRepo, DesignsOfDotNetConstants.DesignsBranch))
                 documentByPath.Add(document.Path, document);
 
             var request = new PullRequestRequest()
@@ -57,7 +52,7 @@ namespace DesignsOfDotNet.Data
                 State = ItemStateFilter.Open
             };
 
-            var pullRequests = await gitHub.Repository.PullRequest.GetAllForRepository("dotnet", "designs", request);
+            var pullRequests = await gitHub.Repository.PullRequest.GetAllForRepository(DesignsOfDotNetConstants.DesignsOwner, DesignsOfDotNetConstants.DesignsRepo, request);
             var designPullRequests = new List<DesignPullRequest>();
 
             foreach (var pr in pullRequests)
@@ -66,7 +61,7 @@ namespace DesignsOfDotNet.Data
                 var repo = pr.Head.Repository.Name;
                 var branch = pr.Head.Ref;
                 var documents = await GetDocuments(owner, repo, branch);
-                var prFiles = await gitHub.Repository.PullRequest.Files("dotnet", "designs", pr.Number);
+                var prFiles = await gitHub.Repository.PullRequest.Files(DesignsOfDotNetConstants.DesignsOwner, DesignsOfDotNetConstants.DesignsRepo, pr.Number);
                 var prFileNames = prFiles.Select(prf => prf.FileName)
                                          .ToHashSet();
 

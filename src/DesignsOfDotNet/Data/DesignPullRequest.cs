@@ -23,7 +23,7 @@ namespace DesignsOfDotNet.Data
         public string User { get; }
         public string UserUrl => $"https://github.com/{User}";
         public Document Document { get; }
-        public string Url => $"https://github.com/dotnet/designs/pull/{Number}";
+        public string Url => $"https://github.com/{DesignsOfDotNetConstants.DesignsOwner}/{DesignsOfDotNetConstants.DesignsRepo}/pull/{Number}";
     }
 }
 

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace DesignsOfDotNet.Data
 {
-    // TODO: We should become an actual GitHub app and react
-    //       to a web hook whenever the repo is changed.
+    // TODO: We should react to a web hook whenever the repo is changed.
     public sealed class DesignSearchService
     {
         private readonly DesignService _designService;

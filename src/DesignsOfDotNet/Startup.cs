@@ -1,4 +1,4 @@
-using DesignsOfDotNet.Data;
+﻿using DesignsOfDotNet.Data;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +26,7 @@ namespace DesignsOfDotNet
             services.AddHostedService<DesignSearchServiceWarmUp>();
             services.AddSingleton<DesignService>();
             services.AddSingleton<DesignSearchService>();
+            services.AddSingleton<GitHubClientFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
