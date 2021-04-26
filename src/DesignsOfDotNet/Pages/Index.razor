@@ -22,15 +22,15 @@
             <td>
                 @if (design.State == DesignState.Accepted)
                 {
-                    <span class="oi oi-circle-check text-success"></span>
+                    <span class="oi oi-circle-check text-success" title="Accepted"></span>
                 }
                 else if (design.State == DesignState.Draft)
                 {
-                    <span class="oi oi-loop-circular text-secondary"></span>
+                    <span class="oi oi-loop-circular text-secondary" title="Draft"></span>
                 }
                 else
                 {
-                    <span class="oi oi-fork text-primary"></span>
+                    <span class="oi oi-fork text-primary" title="In Review"></span>
                 }
             </td>
             <td>@design.Year</td>
