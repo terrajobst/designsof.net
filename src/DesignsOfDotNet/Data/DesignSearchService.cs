@@ -5,27 +5,25 @@ using System.Threading.Tasks;
 
 namespace DesignsOfDotNet.Data
 {
-    // TODO: We should react to a web hook whenever the repo is changed.
     public sealed class DesignSearchService
     {
         private readonly DesignService _designService;
-        private IReadOnlyList<Design>? _designs;
 
-        public DesignSearchService(DesignService documentService)
+        public DesignSearchService(DesignService designService)
         {
-            _designService = documentService;
+            _designService = designService;
         }
 
-        public async Task<IEnumerable<Design>> SearchAsync(string term)
+        public Task<IEnumerable<Design>> SearchAsync(string term)
         {
-            if (_designs is null)
-                _designs = await _designService.GetDesignsAsync();
-
+            var designs = _designService.Designs;
             var terms = Tokenize(term);
-            return _designs.Where(d => terms.All(t => IsMatch(d, t)))
-                           .OrderByDescending(d => d.State)
-                           .ThenByDescending(d => d.Year ?? int.MinValue)
-                           .ThenBy(d => d.Title);
+            var result = designs.Where(d => terms.All(t => IsMatch(d, t)))
+                                .OrderByDescending(d => d.State)
+                                .ThenByDescending(d => d.Year ?? int.MinValue)
+                                .ThenBy(d => d.Title);
+
+            return Task.FromResult(result.AsEnumerable());
         }
 
         private static string[] Tokenize(string term)

@@ -10,7 +10,7 @@ using Microsoft.JSInterop;
 
 namespace DesignsOfDotNet.Pages
 {
-    public partial class Index
+    public sealed partial class Index : IDisposable
     {
         private string _searchText = string.Empty;
 
@@ -19,6 +19,9 @@ namespace DesignsOfDotNet.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; } = null!;
+
+        [Inject]
+        public DesignService DesignService { get; set; } = null!;
 
         [Inject]
         public DesignSearchService DesignSearchService { get; set; } = null!;
@@ -40,12 +43,23 @@ namespace DesignsOfDotNet.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            DesignService.DesignsChanged += DesignService_DesignsChanged;
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
 
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("q", out var q))
                 SearchText = q;
             else
                 SearchResults = await DesignSearchService.SearchAsync("");
+        }
+
+        public void Dispose()
+        {
+            DesignService.DesignsChanged -= DesignService_DesignsChanged;
+        }
+
+        private void DesignService_DesignsChanged(object? sender, EventArgs e)
+        {
+            InvokeAsync(() => UpdateSearchResults());
         }
 
         private async void UpdateSearchResults()

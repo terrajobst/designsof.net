@@ -5,18 +5,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace DesignsOfDotNet.Data
 {
-    public sealed class DesignSearchServiceWarmUp : IHostedService
+    public sealed class DesignServiceWarmUp : IHostedService
     {
-        private readonly DesignSearchService _designSearchService;
+        private readonly DesignService _designService;
 
-        public DesignSearchServiceWarmUp(DesignSearchService designSearchService)
+        public DesignServiceWarmUp(DesignService designService)
         {
-            _designSearchService = designSearchService;
+            _designService = designService;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            return _designSearchService.SearchAsync(string.Empty);
+            return _designService.UpdateAsync();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

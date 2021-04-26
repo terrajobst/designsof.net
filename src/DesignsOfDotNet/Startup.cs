@@ -23,7 +23,9 @@ namespace DesignsOfDotNet
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddHostedService<DesignSearchServiceWarmUp>();
+            services.AddControllers();
+            services.AddHostedService<DesignServiceWarmUp>();
+            services.AddSingleton<DesignLoaderService>();
             services.AddSingleton<DesignService>();
             services.AddSingleton<DesignSearchService>();
             services.AddSingleton<GitHubClientFactory>();
@@ -51,6 +53,7 @@ namespace DesignsOfDotNet
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
