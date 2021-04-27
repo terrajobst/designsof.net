@@ -28,23 +28,42 @@ namespace DesignsOfDotNet.Data
 
         private static string[] Tokenize(string term)
         {
-            // TODO: Support quotes
-
             var result = new List<string>();
             var start = -1;
+            var inQuote = false;
 
             for (var i = 0; i < term.Length; i++)
             {
-                if (!char.IsWhiteSpace(term[i]))
+                var c = term[i];
+
+                if (inQuote)
                 {
-                    if (start < 0)
-                        start = i;
+                    if (c == '"')
+                    {
+                        inQuote = false;
+                        var word = term[start..i];
+                        result.Add(word);
+                        start = -1;
+                    }
                 }
-                else if (start >= 0 && i > start)
+                else
                 {
-                    var word = term[start..i];
-                    result.Add(word);
-                    start = -1;
+                    if (c == '"')
+                    {
+                        inQuote = true;
+                        start = i + 1;
+                    }
+                    else if (!char.IsWhiteSpace(c))
+                    {
+                        if (start < 0)
+                            start = i;
+                    }
+                    else if (start >= 0 && i > start)
+                    {
+                        var word = term[start..i];
+                        result.Add(word);
+                        start = -1;
+                    }
                 }
             }
 
