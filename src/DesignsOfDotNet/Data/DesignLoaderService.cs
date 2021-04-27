@@ -4,11 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
 using Octokit;
 
@@ -17,29 +13,14 @@ namespace DesignsOfDotNet.Data
     public sealed class DesignLoaderService
     {
         private readonly GitHubClientFactory _gitHubClientFactory;
-        private readonly IWebHostEnvironment _environment;
 
-        public DesignLoaderService(GitHubClientFactory gitHubClientFactory, IWebHostEnvironment environment)
+        public DesignLoaderService(GitHubClientFactory gitHubClientFactory)
         {
             _gitHubClientFactory = gitHubClientFactory;
-            _environment = environment;
         }
 
         public async Task<IReadOnlyList<Design>> LoadAsync()
         {
-            if (_environment.IsDevelopment())
-            {
-                var cacheLocation = GetCacheLocation();
-                if (File.Exists(cacheLocation))
-                {
-                    using (var stream = File.OpenRead(cacheLocation))
-                    {
-                        var cachedResult = await JsonSerializer.DeserializeAsync<IReadOnlyList<Design>>(stream);
-                        return cachedResult ?? Array.Empty<Design>();
-                    }
-                }
-            }
-
             var gitHub = await _gitHubClientFactory.CreateAsync();
 
             var documentByPath = new Dictionary<string, Document>();
@@ -93,21 +74,7 @@ namespace DesignsOfDotNet.Data
                 design.PRs.Add(pr);
             }
 
-            var result = designByPath.Values.Select(d => new Design(d.Document, d.PRs.ToArray())).ToArray();
-
-            if (_environment.IsDevelopment())
-            {
-                var cacheLocation = GetCacheLocation();
-                using (var stream = File.Create(cacheLocation))
-                    await JsonSerializer.SerializeAsync(stream, result, new JsonSerializerOptions { WriteIndented = true });
-            }
-
-            return result;
-        }
-
-        private string GetCacheLocation()
-        {
-            return Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location!)!, "designs.json");
+            return designByPath.Values.Select(d => new Design(d.Document, d.PRs.ToArray())).ToArray();
         }
 
         private static async Task<IReadOnlyList<Document>> GetDocuments(string owner, string repo, string branch)

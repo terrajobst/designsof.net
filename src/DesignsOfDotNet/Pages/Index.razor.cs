@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DesignsOfDotNet.Data;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 
@@ -13,6 +14,9 @@ namespace DesignsOfDotNet.Pages
     public sealed partial class Index : IDisposable
     {
         private string _searchText = string.Empty;
+
+        [Inject]
+        public IWebHostEnvironment Environment { get; set; } = null!;
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; } = null!;

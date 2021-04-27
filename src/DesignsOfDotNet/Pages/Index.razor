@@ -70,5 +70,12 @@
 </table>
 
 <div class="text-muted small mb-5">
-    Last updated @((DesignService.LastRefreshedAt -  DateTime.Now).Humanize()) ago.
+    <div>
+        Last updated @((DesignService.LastRefreshedAt -  DateTime.Now).Humanize()) ago.
+    </div>
+
+    @if (Environment.IsDevelopment())
+    { 
+        <button class="mt-1 btn btn-secondary btn-sm" @onclick="() => DesignService.UpdateAsync(force: true)">Reload</button>
+    }
 </div>
