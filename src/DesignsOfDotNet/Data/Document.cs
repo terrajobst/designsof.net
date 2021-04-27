@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using Markdig;
+
 namespace DesignsOfDotNet.Data
 {
     public sealed class Document
@@ -75,8 +77,6 @@ namespace DesignsOfDotNet.Data
             var subheadingRegex = new Regex("^#{2,}");
             var reachedSubheading = false;
 
-            // TODO: We need to remove Markdown markup from the title.
-
             var titleRegex = new Regex("^# *(?<title>.*?)#?$");
             var ownerRegex = new Regex(@"^\*\*Owner(s)?\*\*(?<owner>[^|,]+)(\s*[\|,]\s*(?<owner>[^|,]+))*", RegexOptions.IgnoreCase);
             var draftRegex = new Regex(@"^\*\*DRAFT\*\*$", RegexOptions.IgnoreCase);
@@ -93,7 +93,7 @@ namespace DesignsOfDotNet.Data
 
                     if (titleMatch.Success && title is null)
                     {
-                        title = titleMatch.Groups["title"].Value.Trim();
+                        title = Markdown.ToPlainText(titleMatch.Groups["title"].Value.Trim());
                     }
                     else if (ownerMatch.Success)
                     {
