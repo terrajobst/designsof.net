@@ -75,6 +75,10 @@
     font-weight: bold;
 }
 
+a:hover {
+    text-decoration: none !important;
+}
+
 @media (prefers-color-scheme: dark) {
 
     a:hover {
