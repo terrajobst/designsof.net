@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "jsdelivr",
+      "library": "@forevolve/bootstrap-dark@1.0.0",
+      "destination": "wwwroot/lib/forevolve/bootstrap-dark/",
+      "files": [
+        "dist/css/bootstrap-dark.min.css"
+      ]
+    }
+  ]
+}

@@ -66,3 +66,18 @@
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* Custom */
+
+.gh-issue-title {
+    text-decoration: none !important;
+    color: var(--color-text-primary);
+    font-weight: bold;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    a:hover {
+        color: rgb(88, 166, 255);
+    }
+}

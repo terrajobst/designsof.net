@@ -6,67 +6,59 @@
     </div>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Year</th>
-            <th class="w-100">Title</th>
-            <th>Owners</th>
-        </tr>
-    </thead>
-
-    @foreach (var design in SearchResults)
-    {
-        <tr>
-            <td>
-                @if (design.State == DesignState.Accepted)
-                {
-                    <span class="oi oi-circle-check text-success" title="Accepted"></span>
-                }
-                else if (design.State == DesignState.Draft)
-                {
-                    <span class="oi oi-loop-circular text-secondary" title="Draft"></span>
-                }
-                else
-                {
-                    <span class="oi oi-fork text-primary" title="In Review"></span>
-                }
-            </td>
-            <td>@design.Year</td>
-            <td>
-                <a href="@design.Url">@design.Title</a>
-
-                @if (design.Primary is not null && design.PullRequests.Any())
-                {
-                    <ul class="list-unstyled ml-1 mt-1">
-                        @foreach (var pr in design.PullRequests)
-                        {
-                            <li class="text-muted">
-                                <span class="oi oi-fork text-secondary"></span> <a href="@pr.Url">@pr.Title</a> opened @pr.CreateAt.Humanize() by <a class="text-muted" href="@pr.UserUrl">@pr.User</a>
-                            </li>
-                        }
-                    </ul>
-                }
-            </td>
-            <td>
-                <div class="d-flex flex-nowrap flex">
-                    @{
-                        var isFirst = true;
-                        foreach (var owner in design.Owners)
-                        {
-                            if (isFirst)
-                            {
-                                isFirst = false;
-                            }
-
-                            <div><a href="@owner.Url"><img class="rounded border border-light mr-1" src="@owner.AvatarUrl" width="32" height="32" /></a></div>
-                        }
+<table class="table table-hover">
+    <tbody>
+        @foreach (var design in SearchResults)
+        {
+            <tr>
+                <td>
+                    @if (design.State == DesignState.Accepted)
+                    {
+                        <span class="oi oi-circle-check text-success" title="Accepted"></span>
                     }
-                </div>
-            </td>
-        </tr>
-    }
+                    else if (design.State == DesignState.Draft)
+                    {
+                        <span class="oi oi-loop-circular text-secondary" title="Draft"></span>
+                    }
+                    else
+                    {
+                        <span class="oi oi-fork text-primary" title="In Review"></span>
+                    }
+                </td>
+                <td class="w-100 text-break">
+                    <div class="gh-issue-title">
+                        <a  href="@design.Url">@design.Title</a>
+                    </div>
+                    <div class="text-muted">
+                        @design.StatusText
+                    </div>
+
+                    @if (design.Primary is not null && design.PullRequests.Any())
+                    {
+                        <ul class="list-unstyled ml-1 mt-1">
+                            @foreach (var pr in design.PullRequests)
+                            {
+                                <li class="text-muted">
+                                    <span class="oi oi-fork text-secondary"></span> <a href="@pr.Url">@pr.Title</a> opened @pr.CreateAt.Humanize() by <a class="text-muted" href="@pr.UserUrl">@pr.User</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </td>
+                <td class="d-none d-md-table-cell">
+                    <div class="d-flex flex-nowrap flex">
+                        @{
+                            foreach (var owner in design.Owners)
+                            {
+                                var title = $"Owned by {owner}";
+                                <div><a href="@owner.Url" title="@title"><img class="rounded-circle mr-1" src="@owner.AvatarUrl" width="32" height="32" /></a></div>
+                            }
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 <div class="text-muted small mb-5">
