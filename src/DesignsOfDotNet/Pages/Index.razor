@@ -2,7 +2,7 @@
 
 <form>
     <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search" @bind="SearchText" @bind:event="oninput" />
+        <input @ref="_searchInputReference" type="text" class="form-control" placeholder="Search" @bind="SearchText" @bind:event="oninput" />
     </div>
 </form>
 

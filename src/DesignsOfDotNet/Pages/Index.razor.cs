@@ -14,6 +14,7 @@ namespace DesignsOfDotNet.Pages
     public sealed partial class Index : IDisposable
     {
         private string _searchText = string.Empty;
+        private ElementReference _searchInputReference;
 
         [Inject]
         public IWebHostEnvironment Environment { get; set; } = null!;
@@ -43,6 +44,12 @@ namespace DesignsOfDotNet.Pages
                     UpdateSearchResults();
                 }
             }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+                await _searchInputReference.FocusAsync();
         }
 
         protected override async Task OnInitializedAsync()
