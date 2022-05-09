@@ -12,15 +12,15 @@ jobs:
     - name: Get code
       uses: actions/checkout@v2
 
-    # Publishing
+    - name: Get .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.*'
 
     - name: dotnet publish
       run: |
         cd src/DesignsOfDotNet
         dotnet publish -c Release -o '../../artifacts/DesignsOfDotNet'
-        cd ../..
-
-    # Deploy to Azure
 
     - name: webapps-deploy
       uses: azure/webapps-deploy@v2
@@ -28,4 +28,3 @@ jobs:
         app-name: designsofdotnet
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
         package: ./artifacts/DesignsOfDotNet
-

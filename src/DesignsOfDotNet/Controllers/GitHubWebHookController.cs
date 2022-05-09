@@ -3,27 +3,26 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DesignsOfDotNet.Controllers
+namespace DesignsOfDotNet.Controllers;
+
+[ApiController]
+[Route("github-webhook")]
+[AllowAnonymous]
+public sealed class GitHubWebHookController : Controller
 {
-    [ApiController]
-    [Route("github-webhook")]
-    [AllowAnonymous]
-    public sealed class GitHubWebHookController : Controller
+    private readonly DesignService _designService;
+
+    public GitHubWebHookController(DesignService designService)
     {
-        private readonly DesignService _designService;
+        _designService = designService;
+    }
 
-        public GitHubWebHookController(DesignService designService)
-        {
-            _designService = designService;
-        }
+    [HttpPost]
+    public IActionResult Post()
+    {
+        // Don't await. Just kick of the work here so we don't time out.
+        _ = _designService.UpdateAsync();
 
-        [HttpPost]
-        public IActionResult Post()
-        {
-            // Don't await. Just kick of the work here so we don't time out.
-            _ = _designService.UpdateAsync();
-
-            return Ok();
-        }
+        return Ok();
     }
 }
